@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script
+  src="http://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+    <title>Title</title>
+</head>
+<body>
+    <table border="1px">
+        <tr>
+            <th>ID</th>
+            <th>사용자ID</th>
+            <th>상태</th>
+            <th>대출금</th>
+            <th>회수금</th>
+        </tr>
+        {% for obj in Lone_data %}
+        <tr>
+            <td id="{{ obj.id }}_lone_id">{{ obj.id }}</td>
+            <td>{{ obj.user_id.last_name }}{{ obj.user_id.first_name }}</td>
+            <td>{{ obj.attention }}</td>
+            <td>{{ obj.price }}</td>
+            <td id="{{ obj.id }}_payback"></td>
+        </tr>
+        <script>
+        $(document).ready(function() {
+            var lone_id = $("#{{ obj.id }}_lone_id").text();
+            var list = {{ Payback_id }};
+            for (var i = 0; i < list.length; i++){
+                $.ajax({
+                    url : "main/ajax/payback/"+list[i],
+                    datatype: 'json',
+                    success:function (data){
+                        if (data.lone_id == lone_id) {
+                            var current = $('#'+lone_id+'_payback').text();
+                            if (current == ''){
+                                current = 0;
+                                $('#'+lone_id+'_payback').text(data.payback);
+                            }
+                            else{
+                                current = $('#'+lone_id+'_payback').text();
+                                $('#'+lone_id+'_payback').text(parseInt(current)+parseInt(data.payback));
+                            }
+                        }
+                    }
+                });
+            }
+         });
+        </script>
+        {% endfor %}
+    </table>
+
+
+</body>
+</html>
